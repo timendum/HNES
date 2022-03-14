@@ -279,7 +279,7 @@ class HNComments {
                   <a class="collapser" title="Toggle collapse"></a>
                   <span class="score"></span>
                   <span class="author">
-                    <a href="" title="User profile"></a>
+                    <a href="" title="User profile" class="hnuser"></a>
                     <span class="hnes-user-score-cont noscore" title="User score">(<span class="hnes-user-score"></span>)</span>
                     <span class="hnes-tag-cont">
                       <img class="hnes-tag" title="Tag user">
@@ -703,6 +703,7 @@ var HN = {
 
         HN.initElements();
         HN.removeNumbers();
+        HN.initAvatars();
 
         if (/*window.location.pathname != '/submit' &&*/
             window.location.pathname != '/changepw') {
@@ -1297,6 +1298,9 @@ var HN = {
     addInfoToUsers: function() {
       var author_els = document.querySelectorAll('.author a');
       var usernames = Array.from(author_els).map( x => x.textContent );
+      document.querySelectorAll('.hnuser').forEach((user) => {
+      HN.avatarObserver.observe(user);
+    });
 
       HN.getUserData(usernames, response => {
         if (!response) return;
@@ -1895,7 +1899,58 @@ var HN = {
       $('.title a:link').click(function() {
           $(this).closest('td').addClass('link-highlight');
       });
+    },
+
+    initAvatars: function() {
+      // code from https://news.ycombinator.com/item?id=30668137 by tomxor improved by onion2k
+      let observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+              if (entry.target.firstChild.tagName === 'CANVAS') {
+                observer.unobserve(entry.target);
     }
+              const p = 2;
+              const c = document.createElement('canvas');
+              const x = c.getContext('2d');
+              c.width = 18;
+              c.height = 14;
+              c.style.imageRendering = 'pixelated';
+              const s = entry.target.innerText;
+              const r = 1;
+
+              if (s) {
+                for (
+                  let s = entry.target.innerText, r = 1, i = 28 + s.length;
+                  i--;
+
+                ) {
+                  // xorshift32
+                  (r ^= r << 13), (r ^= r >>> 17), (r ^= r << 5);
+                  const X = i & 3,
+                  Y = i >> 2;
+                  if (i >= 28) {
+                  // seed state
+                  r += s.charCodeAt(i - 28);
+                  x.fillStyle =
+                    '#' + ((r >> 8) & 0xffffff).toString(16).padStart(0, 6);
+                  } else {
+                  // draw pixel
+                  if (r >>> 29 > (X * X) / 3 + Y / 2)
+                    x.fillRect(p * 3 + p * X, p * Y, p, p),
+                    x.fillRect(p * 3 - p * X, p * Y, p, p);
+                  }
+                }
+              }
+              entry.target.prepend(c);
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { rootMargin: '0px 0px 0px 0px' }
+      );
+      HN.avatarObserver = observer;
+    },
 }
 
 
