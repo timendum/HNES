@@ -754,7 +754,7 @@ var HN = {
           }
         }
 
-        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over|\/show|\/shownew|\/hidden|\/upvoted)$/;
+        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over|\/show|\/shownew|\/hidden|\/upvoted|\/front)$/;
         if (postPagesRE.test(pathname)) {
           HN.doPostsList();
 
@@ -764,6 +764,13 @@ var HN = {
           if (pathname == '/jobs') {
             $("body").attr("id", "jobs-body");
           }
+          if (pathname == "/front") {
+          // fix time travel header
+          const navigation = document.querySelectorAll("body #content td table tbody tr:not(.athing) td[colspan]");
+          navigation[1].parentNode.insertBefore(document.createElement('td'), navigation[1]);
+          navigation[0].parentNode.insertBefore(document.createElement('td'), navigation[0]);
+          navigation[1].parentElement.previousElementSibling.style.height = 0;
+        }
           if (pathname == '/show' || pathname == '/jobs') {
             remove_first_tr();
             var blurbRow = $("body #content td table tbody tr:not(.athing):first"),
@@ -1655,7 +1662,8 @@ var HN = {
                              ['bestcomments', '/bestcomments', 'Best comments'],
                              ['newcomments', '/newcomments', 'New comments'],
                              ['noobstories', '/noobstories', 'Stories by new users'],
-                             ['noobcomments', '/noobcomments', 'Comments by new users']
+                             ['noobcomments', '/noobcomments', 'Comments by new users'],
+                             ['past', '/front', 'Frontpage from the past days']
                            ];
 
         if (topsel.length == 0) {
