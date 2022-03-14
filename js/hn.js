@@ -1311,32 +1311,18 @@ var HN = {
               userInfo = userData[name];
 
           if (userInfo) {
-            if (typeof userInfo === "number") {
-              //Convert the legacy format.
-              //  Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"votes": 1}'.
-              //  This change in format was made so that tag information can be saved in the same location;
-              //  i.e. it will soon be saved as etcet: '{"votes": 1, "tag": "Creator of HNES"}'.
-              //
-              //  The conversion only needs to be done here, since this executes on page load,
-              //  which means that whatever username you see will have undergone the conversion to the new format.
-              userInfo = {'votes': userInfo};
-              HN.setLocalStorage(name, JSON.stringify(userInfo));
-              console.log('Converted legacy format for user', name);
+            var info;
+            try {
+              info = JSON.parse(userInfo);
             }
-            else {
-              var info;
-              try {
-                info = JSON.parse(userInfo);
-              }
-              catch (e) {
-                info = {}
-              }
-              // display user tag and score
-              if (info.tag) HN.displayUserTag(author_el, info.tag || '');
-              if (info.votes) HN.displayUserScore(author_el, info.votes);
+            catch (e) {
+              info = {}
             }
+            // display user tag and score
+            if (info.tag) HN.displayUserTag(author_el, info.tag || '');
+            if (info.votes) HN.displayUserScore(author_el, info.votes);
           }
-        };
+        }
       });
 
 
@@ -1909,7 +1895,7 @@ var HN = {
             if (entry.isIntersecting) {
               if (entry.target.firstChild.tagName === 'CANVAS') {
                 observer.unobserve(entry.target);
-    }
+              }
               const p = 2;
               const c = document.createElement('canvas');
               const x = c.getContext('2d');
