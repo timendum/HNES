@@ -64,7 +64,7 @@ var InlineReply = {
       $(this).attr("value", "Posting...");
       //Add loading spinner
       const image = $('<img style="vertical-align:middle;margin-left:5px;"/>');
-      image.attr('src', chrome.extension.getURL("images/spin.gif"));
+      image.attr('src', browser.runtime.getURL("images/spin.gif"));
       $(this).after(image);
       //Post
       const domain = window.location.origin;
@@ -273,11 +273,11 @@ var CommentTracker = {
   }
 }
 
-var unvoteImg = chrome.extension.getURL("images/unvote.gif");
+const unvoteImg = browser.runtime.getURL("images/unvote.gif");
 
 class HNComments {
   constructor(storyId) {
-    var injector = document.createElement('div');
+    const injector = document.createElement('div');
     injector.innerHTML = `
       <template id="hnes-comment-tmpl">
           <div id="" class="hnes-comment" data-hnes-level="">
@@ -474,7 +474,7 @@ class HNComments {
     c.el = commentEl;
 
     if (HN.features["user-tag"]) {
-      tagImageEl.src = chrome.extension.getURL('/images/tag.svg');
+      tagImageEl.src = browser.runtime.getURL('/images/tag.svg');
     } else {
       commentEl.querySelector('.hnes-tag-cont').style.visibility = 'hidden';
     }
