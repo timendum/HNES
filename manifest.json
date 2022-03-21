@@ -45,6 +45,9 @@
       ]
     }
   ],
+  "options_ui": {
+    "page": "options/options.html"
+  },
   "web_accessible_resources": [
     "images/spin.gif",
     "images/unvote.gif",
