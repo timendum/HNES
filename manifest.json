@@ -1,6 +1,6 @@
 {
-  "name": "Hacker News",
-  "short_name": "HNESp",
+  "name": "Miglior for Hacker News",
+  "short_name": "mHN",
   "version": "1.7.0.0",
   "description": "Enhance your experience on Hacker News",
   "manifest_version": 2,
@@ -25,7 +25,6 @@
         "style.css"
       ],
       "matches": [
-        "http://news.ycombinator.com/*",
         "https://news.ycombinator.com/*"
       ]
     },
@@ -40,7 +39,6 @@
         "js/hn.js"
       ],
       "matches": [
-        "http://news.ycombinator.com/*",
         "https://news.ycombinator.com/*"
       ]
     }
