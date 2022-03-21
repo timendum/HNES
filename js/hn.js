@@ -135,6 +135,9 @@ var InlineReply = {
 
 var CommentTracker = {
   init() {
+    if (!HN.features["comment-tracker"]) {
+      return;
+    }
     var page_info = CommentTracker.getInfo();
     HN.getLocalStorage(page_info.id, function (response) {
       var data = response.data;
@@ -230,6 +233,9 @@ var CommentTracker = {
   },
 
   checkIndexPage() {
+	if (!HN.features["comment-tracker"]) {
+      return;
+    }
     $('.comments').each(function () {
       var href = $(this).attr('href');
       if (href) {
@@ -467,7 +473,11 @@ class HNComments {
 
     c.el = commentEl;
 
-    tagImageEl.src = chrome.extension.getURL('/images/tag.svg');
+    if (HN.features["user-tag"]) {
+      tagImageEl.src = chrome.extension.getURL('/images/tag.svg');
+    } else {
+      commentEl.querySelector('.hnes-tag-cont').style.visibility = 'hidden';
+    }
 
     commentEl.id = c.id;
     commentEl.classList.add(`level-${oddOrEven}`);
@@ -702,6 +712,21 @@ function preorder(n, visit, skip) {
 
 var HN = {
   init() {
+    HN.features = {};
+    HN.getDisabledFeatures(function (response) {
+    let data = response.data || [];
+    const features = ["avatars", "user-tag", "user-karma", "comment-tracker"];
+    for (let feature of features) {
+    HN.features[feature] = true;
+    if (data.indexOf(feature) != -1) {
+    HN.features[feature] = false;
+    }
+    }
+    HN.real_init();
+    $('body').css('visibility', 'visible');
+      });
+  },
+  real_init() {
 
     HN.initElements();
     HN.removeNumbers();
@@ -934,6 +959,10 @@ var HN = {
       method: "getUserData",
       usernames
     }, callback);
+  },
+
+  getDisabledFeatures(callback) {
+    chrome.runtime.sendMessage({method: "getDisabledFeatures"}, callback);
   },
 
   doLogin() {
@@ -1278,12 +1307,18 @@ var HN = {
   },
 
   addInfoToUsers() {
+    if (HN.features.avatars) {
+      document.querySelectorAll('.hnuser').forEach((user) => {
+        HN.avatarObserver.observe(user);
+      });
+    }
+    const user_tag = HN.features["user-tag"];
+    const user_karma = HN.features["user-karma"];
+    if (!user_tag && !user_karma) {
+      return;
+    }
     var author_els = document.querySelectorAll('.author a');
     var usernames = Array.from(author_els).map(x => x.textContent);
-    document.querySelectorAll('.hnuser').forEach((user) => {
-      HN.avatarObserver.observe(user);
-    });
-
     HN.getUserData(usernames, response => {
       if (!response) { return; }
       var userData = response.data;
@@ -1301,8 +1336,8 @@ var HN = {
             info = {}
           }
           // display user tag and score
-          if (info.tag) { HN.displayUserTag(author_el, info.tag || ''); }
-          if (info.votes) { HN.displayUserScore(author_el, info.votes); }
+          if (user_tag && info.tag) { HN.displayUserTag(author_el, info.tag || ''); }
+          if (user_karma && info.votes) { HN.displayUserScore(author_el, info.votes); }
         }
       }
     });
@@ -1335,6 +1370,9 @@ var HN = {
 
   upvoteUserData(author, value) { // Adds value to the user's upvote count, saves and displays it.
     //var commenter = $('.author:contains('+author+')');
+    if (!HN.features["user-karma"]) {
+      return;
+    }
     HN.getLocalStorage(author, function (response) {
       var userInfo = {},
         new_upvote_total = value;
@@ -1889,8 +1927,8 @@ var HN = {
                 } else {
                   // draw pixel
                   if ((r >>> 29) > (X * X) / 3 + Y / 2) {
-                    x.fillRect(p * 3 + p * X, p * Y, p, p);
-                    x.fillRect(p * 3 - p * X, p * Y, p, p);
+                  x.fillRect(p * 3 + p * X, p * Y, p, p);
+                  x.fillRect(p * 3 - p * X, p * Y, p, p);
                   }
                 }
               }
@@ -1936,6 +1974,4 @@ $(document).ready(function () {
       }
     });
   }
-
-  $('body').css('visibility', 'visible');
 });
