@@ -1,8 +1,8 @@
 {
-  "name": "Hacker News Enhanced",
+  "name": "Hacker News",
   "short_name": "HNESp",
   "version": "1.7.0.0",
-  "description": "Hacker News Enhanced",
+  "description": "Enhance your experience on Hacker News",
   "manifest_version": 2,
   "background": {
     "scripts": [
@@ -51,7 +51,6 @@
   "web_accessible_resources": [
     "images/spin.gif",
     "images/unvote.gif",
-    "images/tag.svg",
-    "templates/comment.html"
+    "images/tag.svg"
   ]
 }
