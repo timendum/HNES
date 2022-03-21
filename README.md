@@ -1,10 +1,13 @@
-Hacker News Enhancement Suite
+Miglior for Hacker News
 =============================
 
-A Hacker News extension for Firefox and Chrome which changes lots of things.
+A Hacker News extension for Firefox which changes lots of things.  
+Fork of Hacker News Enhancement Suite.  
+New features (not present in HNes) are tagged as (new).
 
 Features
 --------
+* Option to enable/disable some features (new)
 * Completely new style
 * Easy access to all pages
 * Enhanced comment threads
@@ -13,6 +16,7 @@ Features
   * Link to parent
   * Display all comments on paginated threads
   * Highlight the original poster
+* Generated avatars (new)
 * Show and highlight new comments since you last view a thread
 * Highlight links once clicked to more easily identify what you've recently visited
 * Redirect back to the front page upon hitting an expired link
@@ -32,21 +36,8 @@ Features
 
 Firefox AMO link
 ----------------
-https://addons.mozilla.org/en-US/firefox/addon/hnes/
+https://addons.mozilla.org/firefox/addon/miglior-for-hacker-news/
 
-Chrome web store link
----------------------
-https://chrome.google.com/webstore/detail/bappiabcodbpphnojdiaddhnilfnjmpm
-
-TODO
-----
-* Options page
-* Put search in a better place + ajax auto-complete
-* Do something with un-threaded comment lists (e.g. best comments)
-* Make profiles prettier
-* Allow user to highlight friends (ala RES)
-* Show dead/grayed-out comments on mouse hover (or maybe a button)
-* Test / make it work when user can see downvotes
 
 Things I can't test
 -------
@@ -62,6 +53,8 @@ MIT License, see LICENSE
 
 Thanks
 ------
+Thanks to Chris James, the original developer of Hacker News Enhancement Suite
+
 Wayne Larson for hckrnews.com and permission to use code from his extension which displays new comments.
 
 @jarques for his HN+ extension (https://github.com/jarquesp/Hacker-News--) which was used as a starting point for this project.
