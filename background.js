@@ -15,6 +15,15 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var data = getUserData(request.usernames);
     sendResponse({ data: data });
   }
+  else if (request.method == "getDisabledFeatures") {
+	return browser.storage.local.get().then(function(restoredSettings) {
+	  let disabledFeatures = [];
+      if (restoredSettings.hasOwnProperty('disabledFeatures')) {
+	    disabledFeatures = restoredSettings.disabledFeatures;
+      }
+	  return {data: disabledFeatures};
+	}, console.log);
+  }
   else {
     sendResponse({});
   }
