@@ -1922,14 +1922,11 @@ var HN = {
                 if (i >= 28) {
                   // seed state
                   r += s.charCodeAt(i - 28);
-                  x.fillStyle =
-                    '#' + ((r >> 8) & 0xffffff).toString(16).padStart(0, 6);
-                } else {
+                  x.fillStyle = '#' + ((r >> 8) & 0xffffff).toString(16).padStart(0, 6);
+                } else if ((r >>> 29) > (X * X) / 3 + Y / 2) {
                   // draw pixel
-                  if ((r >>> 29) > (X * X) / 3 + Y / 2) {
                   x.fillRect(p * 3 + p * X, p * Y, p, p);
                   x.fillRect(p * 3 - p * X, p * Y, p, p);
-                  }
                 }
               }
             }
