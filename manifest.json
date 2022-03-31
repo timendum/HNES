@@ -4,6 +4,11 @@
   "version": "1.7.0.0",
   "description": "Enhance your experience on Hacker News",
   "manifest_version": 2,
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{498bbd41-6b7d-4871-a8a6-94c4a630c5c0}"
+     }
+   },
   "background": {
     "scripts": [
       "background.js"
