@@ -1263,13 +1263,13 @@ var HN = {
       return;
     }
 
-    var loading_comments = document.getElementById('loading_comments')
+    const loading_comments = document.getElementById('loading_comments');
     if (loading_comments) {
       loading_comments.textContent += '.';
     }
 
-    var moreurl = elem.attr('href');
-    var load_div = $('<div/>');
+    const moreurl = (new URL(elem.attr('href'), document.location)).href;
+    const load_div = $('<div/>');
     load_div.load(moreurl + " > center > table > tbody > tr:nth-child(3) > td > table > tbody > tr", function (response) {
       $(".comments-table > tbody").append(load_div.children());
       $(".morelink").remove();
