@@ -1,7 +1,7 @@
 {
   "name": "Miglior for Hacker News",
   "short_name": "mHN",
-  "version": "1.7.1.0",
+  "version": "1.7.2.0",
   "description": "Enhance your experience on Hacker News",
   "manifest_version": 2,
   "browser_specific_settings": {
