@@ -1272,11 +1272,11 @@ var HN = {
     const load_div = $('<div/>');
     load_div.load(moreurl + " > center > table > tbody > tr:nth-child(3) > td > table > tbody > tr", function (response) {
       $(".comments-table > tbody").append(load_div.children());
-      $(".morelink").remove();
-      const morelink = $('.title a[rel="nofollow"]:contains(More)');
+      const morelink = $('.title a[rel="next"]');
       if (morelink) {
         HN.loadMoreLink(morelink);
       }
+      $(".morelink").remove();
     });
   },
 
