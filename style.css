@@ -737,14 +737,24 @@ body#login-body {
     margin: 0 4px;
     display: none;
 }
+.hnes-scoreForm {
+    display: none;
+}
+.hnes-scoreEdit {
+    padding-left: 2px;
+    width: 54px;
+    margin: 0 4px 0 0;
+}
 .hnes-tagImage {
   margin-right: 3px;
   margin-bottom: 3px;
 }
-.hnes-tag-cont.edit .hnes-tagText {
+.hnes-tag-cont.edit .hnes-tagText,
+.hnes-tag-cont.edit .hnes-scoreForm {
     display: none;
 }
-.hnes-tag-cont.edit .hnes-tagEdit {
+.hnes-tag-cont.edit .hnes-tagEdit:not(.hidden),
+.hnes-tag-cont.edit .hnes-scoreForm:not(.hidden) {
     display: initial;
 }
 
