@@ -744,6 +744,7 @@ body#login-body {
     padding-left: 2px;
     width: 54px;
     margin: 0 4px 0 0;
+    font-size: 12px !important;
 }
 .hnes-tagImage {
   margin-right: 3px;
