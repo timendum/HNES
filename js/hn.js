@@ -294,9 +294,12 @@ class HNComments {
                     <a href="" title="User profile" class="hnuser"></a>
                     <span class="hnes-user-score-cont noscore" title="User score">(<span class="hnes-user-score"></span>)</span>
                     <span class="hnes-tag-cont">
-                      <img class="hnes-tag" title="Tag user">
+                      <img class="hnes-tag" title="Tag user or Edit score">
                       <span class="hnes-tagText" title="User tag"></span>
-                      <input type="text" class="hnes-tagEdit" placeholder="">
+                      <input type="text" class="hidden hnes-tagEdit" placeholder="" title="Edit Tag">
+                      <form class="hidden hnes-scoreForm" action="javascript:void(0)" method="get">
+                        <input type="number" class="hnes-scoreEdit" placeholder="" title="Edit Score">
+                      </form>
                     </span>
                   </span>
                   <!--<span class="age"></span>-->
@@ -473,7 +476,7 @@ class HNComments {
 
     c.el = commentEl;
 
-    if (HN.features["user-tag"]) {
+    if (HN.features["user-tag"] || HN.features["user-karma"]) {
       tagImageEl.src = browser.runtime.getURL('/images/tag.svg');
     } else {
       commentEl.querySelector('.hnes-tag-cont').style.visibility = 'hidden';
@@ -1336,8 +1339,16 @@ var HN = {
             info = {}
           }
           // display user tag and score
-          if (user_tag && info.tag) { HN.displayUserTag(author_el, info.tag || ''); }
-          if (user_karma && info.votes) { HN.displayUserScore(author_el, info.votes); }
+          if (user_tag) {
+            if (info.tag) {
+              HN.displayUserTag(author_el, info.tag || '');
+            }
+          }
+          if (user_karma) {
+            if (info.votes) {
+              HN.displayUserScore(author_el, info.votes);
+            }
+          }
         }
       }
     });
@@ -1348,21 +1359,36 @@ var HN = {
       HN.editUserTag(e);
     });
 
-    $(document).on('keyup', '.hnes-tagEdit', function (e) {
+    $(document).on('keyup', '.hnes-tagEdit, .hnes-scoreEdit', function (e) {
       var code = e.keyCode || e.which,
-        parent = $(e.target).parent(),
+        parent = $(e.target).closest(".hnes-tag-cont"),
         gp = parent.parent();
 
       if (code === 13) { // Enter
         var author = gp.find('a').text(),
-          tagEdit = parent.find('.hnes-tagEdit');
-        HN.setUserTag(author, tagEdit.val());
+          tagEdit = parent.find('.hnes-tagEdit'),
+          scoreEdit = parent.find('.hnes-scoreEdit');
+
+        var newScore = scoreEdit[0].valueAsNumber; // int or NaN (NaN: blank or invalid)
+        if (isNaN(newScore) === true && scoreEdit[0].validity.valid) { // If the score field is blank
+          newScore = 0;
+        }
+
+        if (isNaN(newScore) === false) {
+          HN.setUserTagAndVote(author, tagEdit.val(), newScore);
+        } else {
+          HN.setUserTagAndVote(author, tagEdit.val(), null);
+        }
         parent.removeClass('edit');
       }
       if (code === 27) { // Escape
+        // Restore fields
         var tagText = parent.find('.hnes-tagText');
-        // var tagEdit = parent.find('.hnes-tagEdit');
+        var tagEdit = parent.find('.hnes-tagEdit');
         tagEdit.val(tagText.text());
+        var scoreText = parent.parent().find('.hnes-user-score');
+        var scoreEdit = parent.find('.hnes-scoreEdit');
+        scoreEdit.val(parseInt(scoreText.text()));
         parent.removeClass('edit');
       }
     });
@@ -1411,6 +1437,7 @@ var HN = {
     const userscoreEl = el.parentElement.querySelector('.hnes-user-score');
     userscoreEl.textContent = upvotes;
     userscoreEl.parentElement.classList.remove('noscore');
+    el.parentElement.querySelector('.hnes-scoreEdit').value = upvotes;
   },
 
   displayUserTag(el, tag) {
@@ -1423,30 +1450,51 @@ var HN = {
   editUserTag(e) {
     var parent = $(e.target).parent(),
       tagEdit = parent.find('.hnes-tagEdit');
+    if (HN.features["user-tag"]) {
+      tagEdit.removeClass("hidden");
+    }
+    if (HN.features["user-karma"]) {
+      parent.find('.hnes-scoreForm').removeClass("hidden");
+    }
     parent.addClass('edit');
     tagEdit.focus();
   },
 
-  setUserTag(author, tag) {
+  setUserTagAndVote(author, tag, score = null) {
     HN.getLocalStorage(author, function (response) {
       var userInfo = {};
 
       if (response.data) { userInfo = JSON.parse(response.data); }
 
-      if (tag !== '') { userInfo.tag = tag; }
-      else { delete userInfo.tag; }
+      if (HN.features["user-tag"]) {
+        if (tag !== '') { userInfo.tag = tag; }
+        else { delete userInfo.tag; }
+      }
+
+      if (HN.features["user-karma"]) {
+        if (score !== null) {
+          if (score === 0) {
+            delete userInfo.votes;
+          } else {
+            userInfo.votes = score;
+          }
+          HN.showNewUserScore(author, score); // display the new score
+        }
+      }
 
       HN.setLocalStorage(author, JSON.stringify(userInfo));
     });
 
-    var commenter = $('.author:contains(' + author + ')');
-    for (let i = 0; i < commenter.length; i++) {
-      var tagText = $(commenter[i]).parent().find('.hnes-tagText'),
-        tagEdit = $(commenter[i]).parent().find('.hnes-tagEdit');
-
-      // Change it all to the new value:
-      tagText.text(tag);
-      tagEdit.val(tag);
+    if (HN.features["user-tag"]) {
+      var commenter = $('.author:contains(' + author + ')');
+      for (let i = 0; i < commenter.length; i++) {
+        var tagText = $(commenter[i]).parent().find('.hnes-tagText'),
+          tagEdit = $(commenter[i]).parent().find('.hnes-tagEdit');
+  
+        // Change it all to the new value:
+        tagText.text(tag);
+        tagEdit.val(tag);
+      }
     }
   },
 
